@@ -1,7 +1,26 @@
 <?php 
 require_once('head.php');
 
+$msg ='';
+// if (isset($_POST['SEARCHBTN'])) {
+//   if (!empty($_POST['searchData'])) {
+//     $searchData_    = $_POST['searchData']; // desired search term here
+//     $results = $dataAPI->searchProjects($projects, $searchData_);
+
+//     // Display the search results
+//     foreach ($results as $result) {
+      
+//         echo "Project Name: " . $result['project_name'] . "\n";
+//         echo "Description: " . $result['project_description'] . "\n";
+//         echo "Project URL: " . $result['project_url_on_catalog'] . "\n";
+//         echo "-----------------------------------\n";
+//     }
+
+//   }
+// }
+
 $i = 0;
+$k = 0;
  
 ?>
 
@@ -18,14 +37,14 @@ $i = 0;
             <!-- <a href="#about" class="btn-get-started scrollto">Get Started</a> -->
           </div>
           <div class="col-md-12 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
-            <form action="" method="post" role="form" class="php-email-form">
+            <form method="post" class="php-email-form000">
               <div class="row">
                 <div class="form-group col-md-12">
                   <label for="name">Search for keywords</label>
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
+                  <input type="search" name="searchData" class="form-control" id="name" placeholder="search for keywords" required>
                 </div>
-                  <button type="submit" class="form-control btn-get-started" name="serchProjbtn">Search for projects</button>
-                  <button type="submit" class="form-control btn-get-started" name="serchForConbtn">Search for contributors</button>
+                  <button type="submit" href="#Search" class="form-control btn-get-started" name="SEARCHBTN" >Search for projects</button>
+                  <!-- <button type="submit" class="form-control btn-get-started" name="serchForConbtn">Search for contributors</button> -->
               </div>
             </form>
           </div>
@@ -39,6 +58,52 @@ $i = 0;
   </section><!-- End Hero -->
 
   <main id="main">
+
+    <?php
+      if (isset($_POST['SEARCHBTN'])) {
+        if (!empty($_POST['searchData'])) {
+          $searchData_    = $_POST['searchData']; // desired search term here
+          $results = $dataAPI->searchProjects($searchData_);
+          if (!$results) { $cMsg = "<h3> No result Found!</h3>"; }
+
+    ?>
+     <!-- ======= Search Section ======= -->
+     <section id="Search" class="services section-bg">
+      <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+          <h2>Search Results from Open Science Project</h2>
+          <p><?php echo $cMsg; ?></p>
+        </div>
+
+        <div class="row">
+
+          <?php
+            
+
+            
+                // Display the search results
+                foreach ($results as $result) {
+                  // if ($cMsg == 2) {
+                  //   echo "<h3> No result Found!</h3>";
+                  // }
+                 // if ($k) echo "<h3> Total Result Found ".++$k."</h3>"; break;
+          ?>
+          <div class="col-md-6 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bxl-dribbble"></i></div>
+              <h4 class="title"><a href="projDetails.php?id=<?php echo $result['project_id']; ?>"><?php echo $result['project_name']; ?></a></h4>
+              <p class="description">participant age: <span style="color: green;"><?php echo substr($result['participant_age'], 0, 50); ?></span></p>
+              <a href="projDetails.php?id=<?php echo $result['project_id']; ?>"><button style="color: #fff; background-color:orange;">More...</button></a>
+            </div>
+          </div>
+          <?php } }?>
+        </div>
+
+      </div>
+    </section><!-- End Search Section -->
+        <?php }?>
+
 
     <!-- ======= About Section ======= -->
     <section id="about" class="about">

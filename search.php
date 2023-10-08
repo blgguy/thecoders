@@ -4,36 +4,60 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$dataAPI = new MAIN();
+// $dataAPI = new MAIN();
 
-$_id = 'Florida'; //$_GET['id']; 
+function get_shenavari_in_files($search, $type) {
+    $files   = glob("*.json"); // Get names of all JSON files in a given path 
+    $matches = [];
 
-foreach ($dataAPI->citizenScienceGovOpenScienceProject()['_project'] as $key) {
-  if ($key['project_id'] == 2) {
-    $project_name         =  $key['project_name'];
-    $project_url_external =  $key['project_url_external'];
-    $project_description  =  $key['project_description'];
-    $keywords             =  $key['keywords'];
-    $fields_of_science    =  $key['fields_of_science'];
+    foreach ($files as $file) { 
 
-    $geographic_scope     = $key['geographic_scope'];
-    $participant_age      = $key['participant_age'];
-    $participation_tasks  = $key['participation_tasks'];
-    $scistarter           = $key['scistarter'];
-    $email                = $key['email'];
-    $start_date           = $key['start_date'];
+        $data = json_decode(file_get_contents($file), true); 
 
-  }
+        foreach ($data as $row) {
+
+            if (array_key_exists($type, $data) && $row[$type] == $search) {
+
+                $matches[$file] = $search;
+            }
+
+        }
+    }
+
+    return $matches;
 }
-?>
-<br><br><br>
 
-<h1 style="color:red;"><?php echo $project_name;?></h1>
 
-<?php
-  }else{
-    echo 'ZERO';
-  }
+// Read and decode the JSON file
+$jsonData = file_get_contents('citizenscience.gov.json');
+$projects = json_decode($jsonData, true)['_project'];
+
+// Search function
+function searchProjects($projects, $searchTerm) {
+    $results = array();
+
+    // Iterate through the projects
+    foreach ($projects as $project) {
+        // Compare search term with project name or description
+        if (stripos($project['project_name'], $searchTerm) !== false ||
+            stripos($project['project_description'], $searchTerm) !== false) {
+            $results[] = $project;
+        }
+    }
+
+    return $results;
+}
+
+// Example usage
+$searchTerm = 'weather'; // Enter your desired search term here
+$results = searchProjects($projects, $searchTerm);
+
+// Display the search results
+foreach ($results as $result) {
+    echo "Project Name: " . $result['project_name'] . "\n";
+    echo "Description: " . $result['project_description'] . "\n";
+    echo "Project URL: " . $result['project_url_on_catalog'] . "\n";
+    echo "-----------------------------------\n";
 }
 
 
